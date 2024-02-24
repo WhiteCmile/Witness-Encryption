@@ -1,32 +1,31 @@
-use ndarray::prelude::*;
-use ndarray_rand::rand_distr::Uniform;
-use ndarray_rand::RandomExt;
-use crate::Matrix;
+use rand::Rng;
+use crate::{Range, Matrix};
 
-pub fn gen_matrix(n: usize, m: usize, p: i32) -> Matrix {
-    Array::random((n, m), Uniform::new(0, p))
+pub fn gen_matrix(n: usize, m: usize, p: Range) -> Matrix {
+    let mut rng = rand::thread_rng();
+    Matrix::from_fn(n, m, |_, _| rng.gen_range(0..p) as Range)
 }
 
-pub fn gen_col_vector(n: usize, p: i32) -> Matrix {
+pub fn gen_col_vector(n: usize, p: Range) -> Matrix {
     gen_matrix(n, 1, p)
 }
 
-pub fn gen_row_vector(n: usize, p: i32) -> Matrix {
+pub fn gen_row_vector(n: usize, p: Range) -> Matrix {
     gen_matrix(1, n, p)
 }
 
-pub fn gen_col_vectors(n: usize, d: usize, p: i32) -> Vec<Matrix> {
+pub fn gen_col_vectors(n: usize, k: usize, p: Range) -> Vec<Matrix> {
     let mut vecs: Vec<Matrix> = Vec::with_capacity(n);
     for _ in 0..n {
-        vecs.push(gen_col_vector(d, p));
+        vecs.push(gen_col_vector(k, p));
     }
     vecs
 }
 
-pub fn gen_row_vectors(n: usize, d: usize, p: i32) -> Vec<Matrix> {
+pub fn gen_row_vectors(n: usize, k: usize, p: Range) -> Vec<Matrix> {
     let mut vecs: Vec<Matrix> = Vec::with_capacity(n);
     for _ in 0..n {
-        vecs.push(gen_row_vector(d, p));
+        vecs.push(gen_row_vector(k, p));
     }
     vecs
 }

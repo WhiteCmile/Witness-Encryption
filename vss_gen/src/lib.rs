@@ -1,5 +1,5 @@
-use ndarray::prelude::*;
 use rand::Rng;
+use nalgebra::{DMatrix, DVector};
 use my_lib::file_io::{FileOutput};
 use my_lib::stdio;
 use my_lib::Matrix;
@@ -17,25 +17,22 @@ pub fn get_input() -> (usize, usize) {
 
 pub fn gen_vector_sum(h: &Matrix, n: usize, m: usize) -> (Matrix, Matrix) {
     let mut rand_gen = rand::thread_rng();
-    let mut col_indexes: Vec<usize> = Vec::new();
+    let mut witness = vec![0; m];
+    let mut sum_vector = DVector::zeros(n);
 
-    for col in 0..m {
+    for i in 0..m {
         if rand_gen.gen_bool(0.5) {
-            col_indexes.push(col);
+            let col = h.column(i);
+            sum_vector += h.column(i);
+            witness[i] = 1;
         }
     }
 
-    let selected_vectors = h.select(Axis(1), &col_indexes.as_slice());
-    let witness = Array::from_shape_vec((1, col_indexes.len()), 
-        col_indexes
-            .iter()
-            .map(|num| *num as i32)
-            .collect()).unwrap();
-    let sum_vector = selected_vectors.sum_axis(Axis(1));
+    let res_vector = DMatrix::from_columns(&[sum_vector]);
 
-    let sum_vector: Matrix = Array::from_shape_vec((n, 1), sum_vector.to_vec()).unwrap();
+    let witness = DMatrix::from_vec(1, m, witness);
 
-    (witness, sum_vector)
+    (witness, res_vector)
 }
 
 pub fn gen_output(h: &Matrix, w: &Matrix, l: &Matrix) {
@@ -47,7 +44,7 @@ pub fn gen_output(h: &Matrix, w: &Matrix, l: &Matrix) {
     println!("Do you want to output the witness? [Y/n]");
     let input = stdio::input_string();
     match input.as_str() {
-        "y\n" | "Y\n" => { 
+        "y" | "Y" => { 
             println!("Write witness in witness.txt"); 
             let mut file_io = FileOutput::new("witness.txt");
             file_io.output_matrix(w);

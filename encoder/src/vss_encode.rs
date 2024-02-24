@@ -1,7 +1,7 @@
-use my_lib::{config::Config, Matrix};
+use my_lib::{config::Config, Matrix, Range};
 use my_lib::adp::ADP;
 use my_lib::random_gen;
-use ndarray::Array2;
+use nalgebra::DMatrix;
 
 pub fn gen_encoder(config: &Config, bit: u32, h: &Matrix, l: &Matrix) -> ADP {
     let Config { d, n, k, p} = *config;
@@ -10,15 +10,17 @@ pub fn gen_encoder(config: &Config, bit: u32, h: &Matrix, l: &Matrix) -> ADP {
         R.push(random_gen::gen_matrix(k, k, p));
     }
     let mut A: Matrix = random_gen::gen_matrix(k, k, p);
-    A = bit as i32 * &A;
+    A *= bit as Range;
     for i in 0..d {
-        A = A - l[[i, 0]] * &R[i];
+        // println!("{} {}", l[(0, i)], i);
+        A -= l[(0, i)] * &R[i];
     }
     let mut B: Vec<Matrix> = Vec::with_capacity(n);
     for i in 0..n {
-        let mut mat: Matrix = Array2::zeros((k, k));
+        let mut mat: Matrix = DMatrix::zeros(k, k);
         for j in 0..d {
-            mat = mat + h[[j, i]] * &R[j];
+            // println!("{} {}", h[(j, i)], j);
+            mat += h[(j, i)] * &R[j];
         }
         B.push(mat);
     }

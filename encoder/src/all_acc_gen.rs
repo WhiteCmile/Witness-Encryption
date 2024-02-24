@@ -1,8 +1,8 @@
-use ndarray::prelude::*;
 use my_lib::adp::ADP;
 use my_lib::random_gen;
 use my_lib::config::Config;
-type Matrix = Array2<i32>;
+use my_lib::Matrix;
+use nalgebra::DMatrix;
 
 pub trait Noise {
     fn gen_noise(&self, config: &Config) -> ADP;
@@ -27,15 +27,15 @@ impl Noise for Form {
             st.push(&s[i] * &t[i]);
             ut.push(&u[i] * &t[i]);
         }
-        let mut A = Array2::zeros((k, k));
+        let mut A = DMatrix::zeros(k, k);
         for i in 0..n {
-            A = A + &uv[i];
+            A += &uv[i];
         }
         let mut B: Vec<Matrix> = Vec::with_capacity(n);
         for i in 0..n {
             B.push(-&uv[i] + &st[i]);
             for j in 0..n {
-                B[i] = &B[i] + c[[i, j]] * &ut[j];
+                B[i] += c[(i, j)] * &ut[j];
             }
         }
         ADP::new(n, k, A, B)
@@ -45,7 +45,7 @@ impl Noise for Form {
 impl Noise for Nss {
     fn gen_noise(&self, config: &Config) -> ADP {
         let Config { n, k, .. } = *config;
-        let A: Matrix = Array2::zeros((k, k));
+        let A: Matrix = DMatrix::zeros(k, k);
         let B: Vec<Matrix> = Vec::with_capacity(n);
         ADP::new(n, k, A, B)
     }
