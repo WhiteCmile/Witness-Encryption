@@ -1,7 +1,6 @@
 mod lib;
-use ndarray::Array2;
 use my_lib::{self, random_gen};
-type Matrix = Array2<i32>;
+use my_lib::Matrix;
 
 fn main() {
     let (d, n) = lib::get_input();

@@ -2,16 +2,11 @@ use ndarray::prelude::*;
 use rand::Rng;
 use my_lib::file_io::{self, FileType};
 use my_lib::stdio;
-type Matrix = Array2<i32>;
+use my_lib::Matrix;
 
 pub fn get_input() -> (usize, usize) {
-    let mut input = String::new();
     println!("Please input d and n of matrix H");
-    stdio::get_stdin(&mut input);
-    let numbers: Vec<usize> = input
-        .split_whitespace()
-        .map(|num| num.parse().expect("Input is not a number"))
-        .collect();
+    let numbers = stdio::input_numbers::<usize>();
 
     if numbers.len() != 2 {
         panic!("Wrong number of input; expect two numbers");
@@ -47,9 +42,8 @@ pub fn gen_output(h: &Matrix, w: &Matrix, l: &Matrix) {
     println!("Write matrix H, l in vss.txt");
     file_io::output_matrix("vss.txt", h, FileType::TRUNC);
     file_io::output_matrix("vss.txt", l, FileType::APPEND);
-    let mut input = String::new();
     println!("Do you want to output the witness? [Y/n]");
-    stdio::get_stdin(&mut input);
+    let input = stdio::input_string();
     match input.as_str() {
         "y\n" | "Y\n" => { 
             println!("Write witness in witness.txt"); 

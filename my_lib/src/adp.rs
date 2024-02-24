@@ -1,6 +1,5 @@
-use std::ops::Add;
-use ndarray::prelude::*;
-type Matrix = Array2<i32>;
+use crate::Matrix;
+use crate::file_io::{self, FileType};
 
 #[derive(Debug)]
 pub struct ADP {
@@ -21,9 +20,15 @@ impl ADP {
             B,
         }
     }
+    pub fn output(&self, path: &str) {
+        file_io::output_matrix(path, &self.A, FileType::TRUNC);
+        for mat in self.B.iter() {
+            file_io::output_matrix(path, mat, FileType::APPEND);
+        }
+    }
 }
 
-impl Add for ADP {
+impl std::ops::Add for ADP {
     type Output = ADP;
     fn add(self, other: ADP) -> ADP {
         if self.n != other.n || self.k != other.k {
