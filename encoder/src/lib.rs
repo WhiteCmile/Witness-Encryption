@@ -2,7 +2,7 @@ use my_lib::Matrix;
 use std::env;
 use my_lib::config::Config;
 use my_lib::stdio;
-use my_lib::file_io::{FileInput};
+use my_lib::file_io::FileInput;
 use crate::all_acc_gen::{self, Noise};
 
 pub fn get_opt() -> Box<dyn Noise> {
