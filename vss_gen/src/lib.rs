@@ -1,6 +1,6 @@
 use ndarray::prelude::*;
 use rand::Rng;
-use my_lib::file_io::{self, FileType};
+use my_lib::file_io::{self, FileIO};
 use my_lib::stdio;
 use my_lib::Matrix;
 
@@ -40,14 +40,16 @@ pub fn gen_vector_sum(h: &Matrix, n: usize, m: usize) -> (Matrix, Matrix) {
 
 pub fn gen_output(h: &Matrix, w: &Matrix, l: &Matrix) {
     println!("Write matrix H, l in vss.txt");
-    file_io::output_matrix("vss.txt", h, FileType::TRUNC);
-    file_io::output_matrix("vss.txt", l, FileType::APPEND);
+    let file_io = FileIO::new("vss.txt");
+    file_io.output_matrix(h);
+    file_io.output_matrix(l);
     println!("Do you want to output the witness? [Y/n]");
     let input = stdio::input_string();
     match input.as_str() {
         "y\n" | "Y\n" => { 
             println!("Write witness in witness.txt"); 
-            file_io::output_matrix("witness.txt", w, FileType::TRUNC);
+            let file_io = FileIO::new("witness.txt");
+            file_io.output_matrix(w);
         },
         _ => (),
     }
