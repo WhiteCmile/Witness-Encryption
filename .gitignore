@@ -1,4 +1,5 @@
 /target
+.vscode
 vss.txt
 witness.txt
 encoder.txt
