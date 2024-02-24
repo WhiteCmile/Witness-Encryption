@@ -1,5 +1,5 @@
 use crate::Matrix;
-use crate::file_io::{self, FileIO};
+use crate::file_io::{self, FileOutput};
 
 #[derive(Debug)]
 pub struct ADP {
@@ -21,7 +21,8 @@ impl ADP {
         }
     }
     pub fn output(&self, path: &str) {
-        let file_io = FileIO::new(path);
+        println!("Output write to {}", path);
+        let mut file_io = FileOutput::new(path);
         file_io.output_matrix(&self.A);
         for mat in self.B.iter() {
             file_io.output_matrix(mat);

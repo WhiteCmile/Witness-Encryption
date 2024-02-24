@@ -4,7 +4,7 @@ use std::str::FromStr;
 pub fn input_string() -> String {
     let mut input = String::new();
     stdin().read_line(&mut input).expect("Failed to get user input");
-    input
+    input.trim_end_matches('\n').to_string()
 }
 
 pub fn input_numbers<T>() -> Vec<T> 
